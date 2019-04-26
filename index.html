@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <title>Quiz</title>
+  <link rel="stylesheet" href="css/styles.css">
+  <script src="https://unpkg.com/react@16/umd/react.development.js"></script>
+  <script src="https://unpkg.com/react-dom@16/umd/react-dom.development.js"></script>
+  <script src="https://unpkg.com/babel-standalone@6.15.0/babel.min.js"></script>
+</head>
+<body>
+<div id="root"></div>
+<script type="text/babel">
+    (() => {
+
+      function QuizForm(props){
+        const n = props.currentNum;
+        const quizSet = props.quizSet;
+        return(
+          <div>
+            <div id = 'question'>{quizSet[n].q[n]}</div>
+          </div>
+        );
+      }
+
+      function AnswerForm(props){
+        const n = props.currentNum;
+        const quizSet = props.quizSet;
+        return(
+          <div>
+            <div id = 'choices'　onClick={(quizSet) => {props.checkAnswer()}}>
+              <li>{quizSet[n].c[0]}</li>
+              <li>{quizSet[n].c[1]}</li>
+              <li>{quizSet[n].c[2]}</li>
+            </div>
+          </div>
+        );
+      }
+
+      function NextForm(){
+        return (
+          <div id="btn" onClick={() => {addEvenrLister()}}
+            className="disabled">Next
+          </div>
+        );
+      }
+
+      class App extends React.Component {
+        constructor(props){
+            super(props);
+            this.state = {
+              question: document.getElementById('question'),
+              btn: document.getElementById('btn'),
+              choices: document.getElementById('choices'),
+              result: document.getElementById('result'),
+              scoreLabel: document.querySelector('#result > p'),
+              quizSet: [
+                {q: ['世界で一番大きな湖は？'], c: ['カスピ海', 'カリブ海', '琵琶湖']},
+                {q: ['2の8乗は？'], c: ['256', '64', '1024']},
+                {q: ['いま、何問目？'], c: ['3問目', '4問目', '5問目']},
+              ],
+              currentNum: 0,
+              score: 0,
+              isAnswered: 0
+            };
+        }
+
+        shuffle(arr) {
+          for (let i = arr.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [arr[j], arr[i]] = [arr[i], arr[j]];
+          }
+          return(
+            {}
+          );
+        }
+
+        checkAnswer(props) {
+          // if (isAnswered) {
+          //   return;
+          // }
+          // isAnswered = true;
+
+          if (props.textContent === quizSet[currentNum].c[0]) {
+            li.classList.add('correct');
+            score++;
+          } else {
+            li.classList.add('wrong');
+          }
+
+          btn.classList.remove('disabled');
+        }
+        //
+        // setQuiz() {
+        //   isAnswered = false;
+        //
+        //   question.textContent = quizSet[currentNum].q;
+        //
+        //   while (choices.firstChild) {
+        //     choices.removeChild(choices.firstChild);
+        //   }
+        //
+        //   const shuffledChoices = shuffle([...quizSet[currentNum].c]);
+        //   shuffledChoices.forEach(choice => {
+        //     const li = document.createElement('li');
+        //     li.textContent = choice;
+        //     li.addEventListener('click', () => {
+        //       checkAnswer(li);
+        //     });
+        //     choices.appendChild(li);
+        //   });
+        //
+        //   if (currentNum === quizSet.length - 1) {
+        //     btn.textContent = 'Show Score';
+        //   }
+        // }
+
+        addEventListener(){() => {
+            if (btn.classList.contains('disabled')) {
+              return;
+            }
+            btn.classList.add('disabled');
+
+            if (currentNum === quizSet.length - 1) {
+              // console.log(`Score: ${score} / ${quizSet.length}`);
+              scoreLabel.textContent = `Score: ${score} / ${quizSet.length}`;
+              result.classList.add('show');
+            } else {
+              currentNum++;
+              setQuiz();
+            }
+          };
+        }
+
+        render(){
+          return (
+            <div className="container">
+              <QuizForm
+                quizSet = {this.state.quizSet}
+                currentNum = {this.state.currentNum}
+                checkAnswer = {this.checkAnswer}
+              />
+              <AnswerForm
+              quizSet = {this.state.quizSet}
+              currentNum = {this.state.currentNum}
+              checkAnswer = {this.checkAnswer}
+              />
+              <NextForm/>
+
+            </div>
+          );
+        }
+      }
+
+      ReactDOM.render(
+          <App/>,
+          document.getElementById('root')
+      );
+    })();
+</script>
+
+<!--
+<section id="result">
+<p></p>
+<a href="">Replay?</a>
+</section> -->
+
+
+
+<!-- <div class="container">
+    <p id="question"></p>
+    <ul id="choices"></ul>
+    <div id="btn" class="disabled">Next</div>
+  </div> -->
+
+</body>
+</html>
