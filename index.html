@@ -19,11 +19,13 @@
                 {q: 'いま、何問目？', c: ['3問目', '4問目', '5問目']},
             ];
 
+            const scoreLabel = document.querySelector('#result > p');
+
             function QuestionForm(props){
                 return(
                     <div>
                         <p id="question">
-                            {props.quizSet[props.currentNum].q}
+                            {props.QuestionSelect(props)}
                         </p>
                     </div>
                 );
@@ -31,13 +33,15 @@
             function ChoicesForm(props){
                 const list = props.quizSet[props.currentNum].c.map((choice, choicesId) =>
                      <li key={choicesId} id={choicesId} onClick = {() =>
-                        props.checkAnswer(props, choice, choicesId)
+                        props.checkAnswer(props, choice, choicesId,)
                      }>
                         {choice}
                     </li>
                 );
                 return(
-                    <ul id="choices">{list}</ul>
+                    <div>
+                        <ul id="choices">{list}</ul>
+                    </div>
                 );
             }
             function SubmitButton(props){
@@ -61,6 +65,7 @@
                     super();
                     this.state = {
                         quizSet : quizSet,
+                        scoreLabel: scoreLabel,
                         currentNum : 0,
                         isAnswered : 0,
                         score : 0,
@@ -70,15 +75,23 @@
                     this.checkAnswer = this.checkAnswer.bind(this);
                     this.toNextQuestion = this.toNextQuestion.bind(this);
                 }
+                QuestionSelect(props){
+                    if(props.currentNum === quizSet.length){
+                        return;
+                    }
+                    return(
+                        props.quizSet[props.currentNum].q
+                    );
+                }
                 checkAnswer(props, choice, choicesId){
+                    if(props.currentNum === this.state.quizSet.length){
+                        return null;
+                    }
                     this.setState({
                         isAnswered: choicesId
                     });
                     const li = document.getElementById(choicesId);
                     const btn = document.getElementById('btn');
-                    console.log(li.classList)
-
-                    console.log(this.state.tfflag)
 
                     // tfflagは選択肢を1度のみクリックできるための変数
                     if (this.state.tfflag === 0) {
@@ -102,7 +115,6 @@
                     else{
                         return;
                     }
-
                     btn.classList.remove('disabled');
                 }
                 toNextQuestion(isAnswered){
@@ -113,6 +125,16 @@
                     // btnクラスにdisabledを含んでいる場合は処理を行わない
                     if (btn.classList.contains('disabled')) {
                       return;
+                    }
+                    else if(this.state.currentNum === quizSet.length - 1){
+                        const result = document.getElementById('result');
+                        // scoreLabel = `Score: {score} / {quizSet.length}`;
+                        result.classList.add('show');
+                        this.setState(prevState => {
+                            return{
+                                tfflag: prevState.tfflag - 1
+                            };
+                        });
                     }
                     else{
                         this.setState(prevState => {
@@ -128,6 +150,15 @@
                         };
                     });
 
+                    console.log(this.state.score)
+                    if (this.state.currentNum === quizSet.length - 2) {
+                        btn.textContent = 'Show Score';
+                    }
+
+                }
+
+                result(){
+                    this.state.currentNum
                 }
                 render(){
                     return(
@@ -135,6 +166,7 @@
                             <QuestionForm
                                 quizSet = {this.state.quizSet}
                                 currentNum = {this.state.currentNum}
+                                QuestionSelect = {this.QuestionSelect}
                             />
                             <ChoicesForm
                                 quizSet = {this.state.quizSet}
@@ -150,6 +182,7 @@
                                 toNextQuestion = {this.toNextQuestion}
 
                             />
+
                         </div>
                     )
                 }
