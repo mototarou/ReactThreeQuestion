@@ -19,8 +19,6 @@
                 {q: 'いま、何問目？', c: ['3問目', '4問目', '5問目']},
             ];
 
-            const scoreLabel = document.querySelector('#result > p');
-
             function QuestionForm(props){
                 return(
                     <div>
@@ -48,12 +46,11 @@
                 return(
                     <div>
                         <div id="btn" className="disabled" onClick={() =>
-                                props.toNextQuestion(props.isAnswered)
-
-                            }>Next
+                            props.toNextQuestion(props.isAnswered)}>
+                            Next
                         </div>
                         <section id="result">
-                            <p></p>
+                            <p>Score: {props.score} / {quizSet.length}</p>
                             <a href="">Replay?</a>
                         </section>
                     </div>
@@ -65,7 +62,6 @@
                     super();
                     this.state = {
                         quizSet : quizSet,
-                        scoreLabel: scoreLabel,
                         currentNum : 0,
                         isAnswered : 0,
                         score : 0,
@@ -76,17 +72,11 @@
                     this.toNextQuestion = this.toNextQuestion.bind(this);
                 }
                 QuestionSelect(props){
-                    if(props.currentNum === quizSet.length){
-                        return;
-                    }
                     return(
                         props.quizSet[props.currentNum].q
                     );
                 }
                 checkAnswer(props, choice, choicesId){
-                    if(props.currentNum === this.state.quizSet.length){
-                        return null;
-                    }
                     this.setState({
                         isAnswered: choicesId
                     });
@@ -128,7 +118,6 @@
                     }
                     else if(this.state.currentNum === quizSet.length - 1){
                         const result = document.getElementById('result');
-                        // scoreLabel = `Score: {score} / {quizSet.length}`;
                         result.classList.add('show');
                         this.setState(prevState => {
                             return{
@@ -149,17 +138,12 @@
                             tfflag: prevState.tfflag - 1
                         };
                     });
-
-                    console.log(this.state.score)
                     if (this.state.currentNum === quizSet.length - 2) {
                         btn.textContent = 'Show Score';
                     }
 
                 }
 
-                result(){
-                    this.state.currentNum
-                }
                 render(){
                     return(
                         <div className="container">
@@ -179,6 +163,7 @@
                             <SubmitButton
                                 currentNum = {this.state.currentNum}
                                 isAnswered = {this.state.isAnswered}
+                                score = {this.state.score}
                                 toNextQuestion = {this.toNextQuestion}
 
                             />
