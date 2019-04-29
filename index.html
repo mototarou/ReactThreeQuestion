@@ -12,13 +12,11 @@
     <div id="root"></div>
     <script type='text/babel'>
         (() => {
-
             const quizSet = [
                 {q: '世界で一番大きな湖は？', c: ['カスピ海', 'カリブ海', '琵琶湖']},
                 {q: '2の8乗は？', c: ['256', '64', '1024']},
                 {q: 'いま、何問目？', c: ['3問目', '4問目', '5問目']},
             ];
-
             function QuestionForm(props){
                 return(
                     <div>
@@ -36,6 +34,11 @@
                         {choice}
                     </li>
                 );
+                for (let i = list.length - 1; i > 0; i--) {
+                    const j = Math.floor(Math.random() * (i + 1));
+                    [list[j], list[i]] = [list[i], list[j]];
+                }
+
                 return(
                     <div>
                         <ul id="choices">{list}</ul>
@@ -56,7 +59,6 @@
                     </div>
                 );
             }
-
             class App extends React.Component{
                 constructor(){
                     super();
@@ -82,7 +84,6 @@
                     });
                     const li = document.getElementById(choicesId);
                     const btn = document.getElementById('btn');
-
                     // tfflagは選択肢を1度のみクリックできるための変数
                     if (this.state.tfflag === 0) {
                         if (choice === props.quizSet[props.currentNum].c[0]) {
@@ -141,9 +142,7 @@
                     if (this.state.currentNum === quizSet.length - 2) {
                         btn.textContent = 'Show Score';
                     }
-
                 }
-
                 render(){
                     return(
                         <div className="container">
@@ -158,16 +157,13 @@
                                 score = {this.state.score}　　
                                 isAnswered = {this.state.isAnswered}　　　　　　　　　　　　　　　　　　　　　　
                                 checkAnswer = {this.checkAnswer}
-
                             />
                             <SubmitButton
                                 currentNum = {this.state.currentNum}
                                 isAnswered = {this.state.isAnswered}
                                 score = {this.state.score}
                                 toNextQuestion = {this.toNextQuestion}
-
                             />
-
                         </div>
                     )
                 }
@@ -178,6 +174,6 @@
             )
         })();
     </script>
-
 </body>
 </html>
+
